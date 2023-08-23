@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namma Kada</title>
+    <style>
+        body{
+            background-color: #fcf6e9;
+        }
+        h1{
+            text-align: center;
+            font-size: 30px;
+        }
+        h4,h3
+        
+        {
+            text-align: center;
+        }
+       button:hover{
+        background-color: rgb(23, 122, 235);
+       }
+
+    </style>
+    </head>
+    <body>
+        <section style="padding: 10px;border-radius: 100px;margin: auto;width: 50%;padding: 10px">
+        <div>
+            <h1>WELCOME TO NAMMA KADA</h1>
+            <h4> A Mini shop to buy mini goods </h4>
+            <div class="container" style="background-color:white;border-radius: 100px;border: 1px solid black;"> 
+            <div><br>
+                <h3>Set Purse Amount:<br> <input type="number" id="inputCashBalance" value="" placeholder="enter the amount" style="padding: 10px;border-radius: 10px;"><br><br>
+                <button onclick="setCashBalance()" style="width: 100px;";style="border-radius: 100px;margin: auto;width: 50%;padding: 170px">Set</button><br>
+                <h3 >Current Purse: <span id="cashBalance">Rs.</span></h3>
+            </h3><br>
+            </div>
+            <div class="container" style="align-items: center;align-content: center;padding: 10px;border-radius: 10px;margin: auto;width: 50%;padding: 10px;text-align: center;">
+                <br><h3>Add your items to the Shop List</h3>
+                <input type="text" id="itemName" placeholder="Item Name" style="padding: 10px;border-radius: 10px;"><br><br>
+                <input type="text" id="companyName" placeholder="Enter Company Name" style="padding: 10px;border-radius: 10px;"><br><br>
+                <input type="number" id="itemRate" placeholder="Rate" style="padding: 10px;border-radius: 10px;"><br><br>
+                
+                <button onclick="addItem()" style="padding: 10px;border-radius: 100px;">Add Item</button><br><br>
+            </div>
+                
+            </div>
+        </div>
+        </section><br>
+        <section style="text-align: center;padding: 10px;border-radius: 10px;margin: auto;width: 50%;padding: 100px">
+            <div class="container" style="background-color: rgb(255, 255, 255);border: 1px solid black;border-radius: 10px solid black;">
+                <br><h2>Actions</h2>
+                <P>Remember to choose Option Purchase/Sell</P>
+                <select id="actionType" style="padding: 10px;border-radius: 10px;margin: auto;width: 50%;padding: 10px" ><br>
+                    <br><option value="purchase">Purchase</option><br>
+                    <option value="sell">Sell</option>
+                </select><br>
+                <select id="selectedItem" pla style="padding: 10px;border-radius: 1000px;"></select><br>
+                <input type="number" id="quantity" placeholder="Qty" style="padding: 10px;border-radius: 10px;"><br>
+                <input type="number" id="rate" placeholder="Rate" style="padding: 10px;border-radius: 10px;"><br><br>
+                <button onclick="transaction()" style="padding: 10px;border-radius: 10px;background-color: #3762f0 ;color: white; ;">Proceed</button><br><br>
+            </div>
+            <div class="container">
+            </div>
+        </section>
+        <section style="align-items: center;align-content: center;padding: 10px;border-radius: 10px;margin: auto;width: 50%;padding: 10px;text-align: center;border: 10px #000000;background-color: #ffffff;">
+            <h3 style="align-items: center;align-content: center;padding: 10px;border-radius: 10px;margin: auto;width: 50%;padding: 10px;text-align: center;">Transactions</h3>
+            <ul id="transactionList"></ul>
+        </section>
+        <script>
+           
+           let cashBalance = 1000;
+           const items = [];
+   
+   
+           function updateCashBalance(amount) {
+               cashBalance += amount;
+               document.getElementById('cashBalance').innerText = `Rs. ${cashBalance}`;
+           }
+   
+   
+           function addItem() {
+               const itemName = document.getElementById('itemName').value;
+               const itemRate = Number(document.getElementById('itemRate').value);
+               if (itemName && itemRate) {
+                   items.push({ name: itemName, rate: itemRate });
+                   populateItems();
+               }
+           }
+   
+   
+           function populateItems() {
+               const dropdown = document.getElementById('selectedItem');
+               dropdown.innerHTML = '';
+               items.forEach((item, index) => {
+                   const option = document.createElement('option');
+                   option.value = index;
+                   option.innerText = item.name;
+                   dropdown.appendChild(option);
+               });
+           }
+   
+   
+           function transaction() {
+               const actionType = document.getElementById('actionType').value;
+               const selectedItemIndex = document.getElementById('selectedItem').value;
+               const rate = Number(document.getElementById('rate').value);
+               const qty = Number(document.getElementById('quantity').value);
+               if (selectedItemIndex !== '' && rate && qty) {
+                   const item = items[selectedItemIndex];
+                   const transactionAmount = rate * qty;
+                   const li = document.createElement('li');
+                   if (actionType === 'purchase') {
+                       updateCashBalance(-transactionAmount);
+                       li.innerText = `Purchased ${qty} ${item.name} for Rs. ${transactionAmount}`;
+                   } else {
+                       updateCashBalance(transactionAmount);
+                       li.innerText = `Sold ${qty} ${item.name} for Rs. ${transactionAmount}`;
+                   }
+                   document.getElementById('transactionList').appendChild(li);
+               }
+           }
+           function transaction() {
+       const actionType = document.getElementById('actionType').value;
+       const selectedItemIndex = document.getElementById('selectedItem').value;
+       const rate = Number(document.getElementById('rate').value);
+       const qty = Number(document.getElementById('quantity').value);
+       const companyName = document.getElementById('companyName').value; // Get company name input
+
+       const transactionAmount = rate * qty;
+
+       if (actionType === 'purchase' && transactionAmount > cashBalance) {
+           alert('Insufficient funds!');
+           return;
+       }
+
+       if (selectedItemIndex !== '' && rate && qty && companyName) { // Check if company name is entered
+           const item = items[selectedItemIndex];
+           const li = document.createElement('li');
+           if (actionType === 'purchase') {
+               updateCashBalance(-transactionAmount);
+               li.innerText = `Purchased ${qty} ${item.name} for Rs. ${transactionAmount} from ${companyName}`; // Include company name
+           } else {
+               updateCashBalance(transactionAmount);
+               li.innerText = `Sold ${qty} ${item.name} for Rs. ${transactionAmount} to ${companyName}`; // Include company name
+           }
+           document.getElementById('transactionList').appendChild(li);
+       }
+   }
+   let purchaseIdCounter = 1;
+let salesIdCounter = 1;
+
+function purchaseItem(selectedItemIndex, qty, rate) {
+   const item = items[selectedItemIndex];
+   const transactionAmount = rate * qty;
+   updateCashBalance(-transactionAmount);
+
+   item.purchaseId = purchaseIdCounter;
+   purchaseIdCounter++;
+
+   return transactionAmount;
+}
+
+function sellItem(selectedItemIndex, qty, rate) {
+   const item = items[selectedItemIndex];
+   const transactionAmount = rate * qty;
+   updateCashBalance(transactionAmount);
+
+   item.salesId = salesIdCounter;
+   salesIdCounter++;
+
+   return transactionAmount;
+}
+
+function transaction() {
+   const actionType = document.getElementById('actionType').value;
+   const selectedItemIndex = document.getElementById('selectedItem').value;
+   const rate = Number(document.getElementById('rate').value);
+   const qty = Number(document.getElementById('quantity').value);
+   const companyName = document.getElementById('companyName').value;
+
+   if (selectedItemIndex !== '' && rate && qty && companyName) {
+       if (actionType === 'purchase') {
+           const transactionAmount = purchaseItem(selectedItemIndex, qty, rate);
+           const item = items[selectedItemIndex];
+           const li = document.createElement('li');
+           li.innerText = `Purchased ${qty} ${item.name} for Rs. ${transactionAmount} from ${companyName} (Purchase ID: ${item.purchaseId})`;
+           document.getElementById('transactionList').appendChild(li);
+       } else {
+           const transactionAmount = sellItem(selectedItemIndex, qty, rate);
+           const item = items[selectedItemIndex];
+           const li = document.createElement('li');
+           li.innerText = `Sold ${qty} ${item.name} for Rs. ${transactionAmount} to ${companyName} (Sales ID: ${item.salesId})`;
+           document.getElementById('transactionList').appendChild(li);
+       }
+   }
+}
+function setCashBalance() {
+            const inputBalance = Number(document.getElementById('inputCashBalance').value);
+            if (!isNaN(inputBalance)) {
+                cashBalance = inputBalance;
+                document.getElementById('cashBalance').innerText = `Rs. ${cashBalance}`;
+            } else {
+                alert('Please enter a valid amount!');
+        }
+        }
+        function transaction() {
+    const actionType = document.getElementById('actionType').value;
+    const selectedItemIndex = document.getElementById('selectedItem').value;
+    const rate = Number(document.getElementById('rate').value);
+    const qty = Number(document.getElementById('quantity').value);
+
+    const transactionAmount = rate * qty;
+
+    if (actionType === 'purchase' && transactionAmount > cashBalance) {
+        alert('Insufficient funds!');
+        return;
+    }
+
+    if (selectedItemIndex !== '' && rate && qty) {
+        const item = items[selectedItemIndex];
+        const li = document.createElement('li');
+        if (actionType === 'purchase') {
+            updateCashBalance(-transactionAmount);
+            li.innerText = `Purchased ${qty} ${item.name} for Rs. ${transactionAmount}`;
+        } else {
+            updateCashBalance(transactionAmount);
+            li.innerText = `Sold ${qty} ${item.name} for Rs. ${transactionAmount}`;
+        }
+        document.getElementById('transactionList').appendChild(li);
+    }
+}
+   
+           // Initialize with some items for demo
+           items.push({ name: 'Pen', rate: 5 });
+           items.push({ name: 'Pencil', rate: 2 });
+           items.push({ name: 'Eraser', rate: 1 });
+           items.push({ name: 'Sharpener', rate: 2 });
+           items.push({ name: 'Geometry box', rate: 10 });
+           populateItems();
+       </script>
+       <script>
+        function addItem() {
+        const itemName = document.getElementById('itemName').value;
+        const itemRate = Number(document.getElementById('itemRate').value);
+        
+        if (itemName && itemRate) {
+            fetch('/add_item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `item_name=${itemName}&item_rate=${itemRate}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                populateItems();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+
+       </script>
+            
+    </body>
+</html>
